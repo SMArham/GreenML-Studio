@@ -1,0 +1,46 @@
+[
+  {
+    "model_key": "tier_0",
+    "tier": "Ultra-Green",
+    "model_label": "LogisticRegression (C=10.0)",
+    "family": "LogisticRegression",
+    "test_accuracy": 0.7757847533632287,
+    "f1_score": 0.6987951807228916,
+    "inf_energy_1k_j": 0.37812365625,
+    "inf_co2_1k_g": 0.00034062102927027776,
+    "train_energy_j": 0.02901076959375
+  },
+  {
+    "model_key": "tier_1",
+    "tier": "Balanced-1",
+    "model_label": "LogisticRegression (C=1.0)",
+    "family": "LogisticRegression",
+    "test_accuracy": 0.7847533632286996,
+    "f1_score": 0.7108433734939759,
+    "inf_energy_1k_j": 0.38387503125,
+    "inf_co2_1k_g": 0.0003507105088025001,
+    "train_energy_j": 0.027019519593750003
+  },
+  {
+    "model_key": "tier_2",
+    "tier": "Balanced-2",
+    "model_label": "LogisticRegression (C=0.01)",
+    "family": "LogisticRegression",
+    "test_accuracy": 0.8026905829596412,
+    "f1_score": 0.6857142857142857,
+    "inf_energy_1k_j": 0.44519775,
+    "inf_co2_1k_g": 0.00035071696110888887,
+    "train_energy_j": 0.0062556766875
+  },
+  {
+    "model_key": "tier_3",
+    "tier": "Max-Accuracy",
+    "model_label": "KNN (k=3)",
+    "family": "KNN",
+    "test_accuracy": 0.8116591928251121,
+    "f1_score": 0.75,
+    "inf_energy_1k_j": 10.957027499999999,
+    "inf_co2_1k_g": 0.009755425539533333,
+    "train_energy_j": 0.0024498766875
+  }
+]

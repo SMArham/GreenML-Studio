@@ -1,0 +1,24 @@
+[
+  {
+    "model_key": "tier_0",
+    "tier": "Ultra-Green",
+    "model_label": "LogisticRegression (C=100.0)",
+    "family": "LogisticRegression",
+    "test_accuracy": 0.734375,
+    "f1_score": 0.5785123966942148,
+    "inf_energy_1k_j": 0.65129109375,
+    "inf_co2_1k_g": 0.0006046905530652778,
+    "train_energy_j": 0.029457019593749998
+  },
+  {
+    "model_key": "tier_1",
+    "tier": "Max-Accuracy",
+    "model_label": "DecisionTree (depth=4)",
+    "family": "DecisionTree",
+    "test_accuracy": 0.765625,
+    "f1_score": 0.6715328467153284,
+    "inf_energy_1k_j": 0.66402984375,
+    "inf_co2_1k_g": 0.0006270377930541667,
+    "train_energy_j": 0.0314812875
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "public": true,
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/frontend/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/index.html"
+    }
+  ]
+}

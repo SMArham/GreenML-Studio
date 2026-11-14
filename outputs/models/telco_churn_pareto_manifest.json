@@ -1,0 +1,35 @@
+[
+  {
+    "model_key": "tier_0",
+    "tier": "Ultra-Green",
+    "model_label": "LogisticRegression (C=1.0)",
+    "family": "LogisticRegression",
+    "test_accuracy": 0.8012492901760363,
+    "f1_score": 0.5911214953271028,
+    "inf_energy_1k_j": 0.7199931531250001,
+    "inf_co2_1k_g": 0.000545928792818176,
+    "train_energy_j": 0.07733248125
+  },
+  {
+    "model_key": "tier_1",
+    "tier": "Balanced-1",
+    "model_label": "LogisticRegression (C=10.0)",
+    "family": "LogisticRegression",
+    "test_accuracy": 0.8063600227143668,
+    "f1_score": 0.6039488966318235,
+    "inf_energy_1k_j": 0.7812831531250001,
+    "inf_co2_1k_g": 0.0006534481600181758,
+    "train_energy_j": 0.08061245625
+  },
+  {
+    "model_key": "tier_2",
+    "tier": "Max-Accuracy",
+    "model_label": "LogisticRegression (C=100.0)",
+    "family": "LogisticRegression",
+    "test_accuracy": 0.8069278818852924,
+    "f1_score": 0.605568445475638,
+    "inf_energy_1k_j": 0.8551606531250001,
+    "inf_co2_1k_g": 0.0007830494334774353,
+    "train_energy_j": 0.0986919
+  }
+]

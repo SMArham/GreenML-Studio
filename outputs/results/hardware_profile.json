@@ -1,0 +1,12 @@
+{
+  "os_name": "Windows-11-10.0.26200-SP0",
+  "cpu_model": "Intel(R) Core(TM) i7-8665U CPU @ 1.90GHz",
+  "cpu_count": 8,
+  "cpu_tdp_watts": 15.0,
+  "ram_power_watts": 20.0,
+  "ram_total_gb": 23.78,
+  "country_iso_code": "PAK",
+  "carbon_intensity_kg_per_kwh": 0.440608,
+  "tracking_mode": "CodeCarbon cpu_load (TDP * effective CPU utilization) + nanosecond process_time",
+  "calibrated_at": "2026-11-12T02:14:24"
+}

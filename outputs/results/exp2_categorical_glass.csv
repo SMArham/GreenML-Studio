@@ -1,0 +1,7 @@
+parameter,target,kruskal_h,p_value,group_medians
+solver,test_accuracy,27.101951896009265,1.3028245131157358e-06,"{'adam': 0.36574, 'lbfgs': 0.71296, 'sgd': 0.35185}"
+solver,train_energy_j,1.314413265306115,0.5182971084815167,"{'adam': 0.81196, 'lbfgs': 0.87864, 'sgd': 0.72547}"
+solver,inf_energy_j,0.1651785714285552,0.9207292262200775,"{'adam': 1.5729, 'lbfgs': 1.5615, 'sgd': 1.62313}"
+activation,test_accuracy,0.3493011474796496,0.8397504003508325,"{'logistic': 0.35185, 'relu': 0.60185, 'tanh': 0.44444}"
+activation,train_energy_j,0.9734693877551024,0.6146300764377761,"{'logistic': 0.74734, 'relu': 0.63505, 'tanh': 0.8763}"
+activation,inf_energy_j,2.8331065759637113,0.24254857291495976,"{'logistic': 1.67675, 'relu': 1.57555, 'tanh': 1.56044}"

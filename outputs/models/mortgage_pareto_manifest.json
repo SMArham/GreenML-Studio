@@ -1,0 +1,46 @@
+[
+  {
+    "model_key": "tier_0",
+    "tier": "Ultra-Green",
+    "model_label": "LogisticRegression (C=100.0)",
+    "family": "LogisticRegression",
+    "test_accuracy": 0.668,
+    "f1_score": 0.6914498141263941,
+    "inf_energy_1k_j": 0.7818961875000001,
+    "inf_co2_1k_g": 0.0007262371769838888,
+    "train_energy_j": 0.17531407499999996
+  },
+  {
+    "model_key": "tier_1",
+    "tier": "Balanced-1",
+    "model_label": "LogisticRegression (C=10.0)",
+    "family": "LogisticRegression",
+    "test_accuracy": 0.684,
+    "f1_score": 0.7084870848708487,
+    "inf_energy_1k_j": 0.7860286875,
+    "inf_co2_1k_g": 0.0007334867084727778,
+    "train_energy_j": 0.1463507625
+  },
+  {
+    "model_key": "tier_2",
+    "tier": "Balanced-2",
+    "model_label": "DecisionTree (depth=4)",
+    "family": "DecisionTree",
+    "test_accuracy": 0.71,
+    "f1_score": 0.7309789343246592,
+    "inf_energy_1k_j": 1.12906209375,
+    "inf_co2_1k_g": 0.0010125498739008334,
+    "train_energy_j": 0.0091227766875
+  },
+  {
+    "model_key": "tier_3",
+    "tier": "Max-Accuracy",
+    "model_label": "SVM (rbf,C=1.0)",
+    "family": "SVM",
+    "test_accuracy": 0.712,
+    "f1_score": 0.7209302325581395,
+    "inf_energy_1k_j": 157.94896818750004,
+    "inf_co2_1k_g": 0.15251912404461054,
+    "train_energy_j": 0.23400886875000002
+  }
+]

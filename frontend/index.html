@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GreenML Studio | Machine Learning Energy &amp; Accuracy Trade-Off Platform</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <link rel="stylesheet" href="/static/styles.css?v=4.2" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5"></path>
+            <path d="M2 12l10 5 10-5"></path>
+          </svg>
+        </div>
+        <div class="brand-text-group">
+          <span class="brand-title">GreenML Studio</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="telemetry-pill">
+          <span class="pulse-dot"></span>
+          <span>Telemetry Active</span>
+        </div>
+        <button id="menu-toggle" class="menu-toggle" aria-label="Toggle Navigation" aria-expanded="false" aria-controls="nav-tabs">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="nav-tabs" id="nav-tabs" aria-label="Primary Navigation">
+      <button class="nav-btn active" data-tab="overview">Project Overview</button>
+      <button class="nav-btn" data-tab="exp1">Grid &amp; Pareto</button>
+      <button class="nav-btn" data-tab="exp2">Drivers &amp; Stages</button>
+      <button class="nav-btn" data-tab="exp3">NSGA-II &amp; Payback</button>
+      <button class="nav-btn" data-tab="cross">Cross-Model Benchmark</button>
+      <button class="nav-btn" data-tab="live">Live Simulator &amp; Hot-Swap</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- TAB 1: PROJECT OVERVIEW (HOME) -->
+    <section id="tab-overview" class="tab-panel active">
+      <div class="hero-card card">
+        <div class="hero-eyebrow">Green AI Research Platform</div>
+        <h1 class="hero-title">Empirical Accuracy vs. Energy Trade-Off in Machine Learning</h1>
+        <p class="hero-desc">
+          Modern AI optimization over-focuses on accuracy, consuming 5x to 20x more power for marginal (&lt;1%) gains. GreenML Studio empirically profiles hardware telemetry to discover Pareto Knee Points that save <strong>50% to 85%+ energy</strong> with virtually zero accuracy loss.
+        </p>
+        <div class="hero-grid">
+          <div class="hero-box">
+            <div class="hero-box-label">The Problem (Accuracy-Only ML)</div>
+            <p>Chasing peak accuracy wastes massive computational power and carbon emissions for fractions of a percent.</p>
+          </div>
+          <div class="hero-box">
+            <div class="hero-box-label">The Solution (Pareto Knee Points)</div>
+            <p>Multi-objective Pareto optimization locates the optimal knee points: <strong>50% to 85%+ energy savings</strong> with <strong>&lt;2% accuracy trade-off</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="overview-kpis" class="kpi-grid"></div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Empirical Evidence Across 5 UCI Benchmarks</h2>
+          <span class="badge">Verified Experimental Data</span>
+        </div>
+        <div class="table-wrap">
+          <table id="rq-summary-table"></table>
+        </div>
+      </div>
+
+      <!-- PUBLICATION FIGURES SHOWCASE -->
+      <div class="card publication-showcase-card">
+        <div class="card-header publication-header">
+          <div>
+            <h2>Core Empirical Publication Figures</h2>
+            <p class="section-subhead">Curated master plates capturing the full research lifecycle: Pareto knee trajectories, hyperparameter attribution, evolutionary search, and multi-family benchmarks.</p>
+          </div>
+        </div>
+
+        <!-- Pill Bar -->
+        <div class="fig-segmented-bar" id="fig-segmented-bar">
+          <button class="fig-filter-btn active" data-filter="all">All Essential Figures (5)</button>
+        </div>
+
+        <!-- Scrollable Cards Deck / Grid -->
+        <div class="fig-deck-container" id="fig-deck-container">
+          <!-- Dynamically populated with 5 rich, responsive cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: EXP 1 - GRID & PARETO -->
+    <section id="tab-exp1" class="tab-panel">
+      <div class="controls-bar card">
+        <div class="control-group">
+          <label for="exp1-dataset">Dataset</label>
+          <select id="exp1-dataset"></select>
+        </div>
+        <div class="control-group">
+          <label>Lifecycle Stage</label>
+          <div class="segmented" id="exp1-stage">
+            <button class="seg-btn active" data-val="train">Training Stage</button>
+            <button class="seg-btn" data-val="inf">Inference Stage (1,000 runs)</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="exp1-kpis" class="kpi-grid"></div>
+
+      <div class="card">
+        <div id="exp1-pareto-chart" class="chart-box"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Pareto Frontier Profile Comparison (Min Energy, Knee Point, Max Accuracy)</h2>
+        </div>
+        <div class="table-wrap">
+          <table id="exp1-knee-table"></table>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div id="exp1-hist-chart" class="chart-box-sm"></div>
+        </div>
+        <div class="card">
+          <div id="exp1-time-energy-chart" class="chart-box-sm"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Theoretical Inference FLOPs vs. Measured Hardware Inference Energy</h2>
+          <span id="flops-corr-badge" class="badge">Calculating...</span>
+        </div>
+        <div id="exp1-flops-chart" class="chart-box-sm"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: EXP 2 - DRIVERS & STAGES -->
+    <section id="tab-exp2" class="tab-panel">
+      <div class="controls-bar card">
+        <div class="control-group">
+          <label for="exp2-dataset">Dataset</label>
+          <select id="exp2-dataset"></select>
+        </div>
+        <div class="control-group">
+          <label>Pareto Stage</label>
+          <div class="segmented" id="exp2-stage">
+            <button class="seg-btn active" data-val="train">Training Pareto Front</button>
+            <button class="seg-btn" data-val="inf">Inference Pareto Front</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="exp2-section5-kpis" class="kpi-grid"></div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Hyperparameter Progression Along Pareto Front</h2>
+          <span class="badge">Ascending Order</span>
+        </div>
+        <div class="table-wrap">
+          <table id="exp2-pareto-matrix"></table>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><h2>Numerical Hyperparameter Drivers (Spearman Rank Correlation)</h2></div>
+          <div class="table-wrap"><table id="exp2-spearman-table"></table></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>Categorical Hyperparameter Drivers (Kruskal-Wallis Test)</h2></div>
+          <div class="table-wrap"><table id="exp2-cat-table"></table></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Training Stage Energy vs. Inference Stage Energy Correlation</h2>
+          <span id="rq4-badge" class="badge"></span>
+        </div>
+        <div id="exp2-rq4-chart" class="chart-box"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: EXP 3 - NSGA-II & PAYBACK -->
+    <section id="tab-exp3" class="tab-panel">
+      <div class="controls-bar card">
+        <div class="control-group">
+          <label for="exp3-dataset">Dataset</label>
+          <select id="exp3-dataset"></select>
+        </div>
+        <div class="control-group slider-group">
+          <label for="payback-daily">Simulated Daily Production Inferences: <strong id="payback-daily-val">100,000</strong> / day</label>
+          <input type="range" id="payback-daily" min="5000" max="1000000" step="5000" value="100000" />
+        </div>
+      </div>
+
+      <div id="exp3-kpis" class="kpi-grid"></div>
+
+      <div class="two-col">
+        <div class="card">
+          <div id="exp3-attainment-chart" class="chart-box"></div>
+        </div>
+        <div class="card">
+          <div id="exp3-payback-chart" class="chart-box"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: CROSS-MODEL BENCHMARK -->
+    <section id="tab-cross" class="tab-panel">
+      <div class="controls-bar card">
+        <div class="control-group">
+          <label for="cross-dataset">Benchmark Dataset</label>
+          <select id="cross-dataset"></select>
+        </div>
+        <div class="control-group">
+          <label>Energy Axis</label>
+          <div class="segmented" id="cross-stage">
+            <button class="seg-btn active" data-val="train">Training Energy (Joules)</button>
+            <button class="seg-btn" data-val="inf">Inference 1k Energy (Joules)</button>
+          </div>
+        </div>
+        <div class="control-group right-align">
+          <button id="cross-export-csv" class="btn-secondary">Export Benchmark CSV</button>
+        </div>
+      </div>
+
+      <div id="cross-kpis" class="kpi-grid"></div>
+
+      <div class="card">
+        <div id="cross-chart" class="chart-box"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Best Models Comparison Table</h2>
+            <p class="section-subhead">Curated top-performing classifiers: high predictive accuracy, minimal training time, and ultra-low energy consumption.</p>
+          </div>
+          <span class="badge" id="cross-badge">⭐ Best Models</span>
+        </div>
+        <div class="table-wrap">
+          <table id="cross-table"></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: LIVE SIMULATOR & HOT-SWAP -->
+    <section id="tab-live" class="tab-panel">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <h2>Adaptive Pareto Model Hot-Swapping</h2>
+            <span class="badge">Dynamic Policy Router</span>
+          </div>
+          <div class="form-grid">
+            <div class="control-group">
+              <label for="hs-dataset">Target Dataset</label>
+              <select id="hs-dataset"></select>
+            </div>
+            <div class="control-group">
+              <label for="hs-sample">Test Sample Index</label>
+              <input type="number" id="hs-sample" value="0" min="0" max="500" />
+            </div>
+            <div class="control-group">
+              <label for="hs-battery">Power / Battery Budget: <strong id="hs-battery-val">50%</strong></label>
+              <input type="range" id="hs-battery" min="10" max="100" step="5" value="50" />
+            </div>
+            <div class="control-group">
+              <label for="hs-sla">Minimum Accuracy Threshold: <strong id="hs-sla-val">0.700</strong></label>
+              <input type="range" id="hs-sla" min="0.50" max="0.98" step="0.01" value="0.70" />
+            </div>
+          </div>
+          <button id="hs-run-btn" class="btn-primary full-width">Execute Hot-Swapped Inference</button>
+          <div id="hs-output" class="live-result-box muted">Select budget parameters and execute to observe live routing and energy metrics.</div>
+          <div class="table-wrap mt-sm">
+            <table id="hs-surface-table"></table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>On-Demand Classifier Benchmarking</h2>
+            <span class="badge">Live Execution</span>
+          </div>
+          <div class="form-grid">
+            <div class="control-group">
+              <label for="live-dataset">Dataset</label>
+              <select id="live-dataset">
+                <option value="iris">Iris (UCI)</option>
+                <option value="glass">Glass Identification (UCI)</option>
+                <option value="ionosphere">Ionosphere (UCI)</option>
+                <option value="diabetes" selected>Pima Indians Diabetes (UCI)</option>
+                <option value="titanic">Titanic Survival (Kaggle)</option>
+                <option value="telco_churn">Telco Customer Churn (Kaggle)</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="live-hidden">MLP Hidden Units</label>
+              <input type="number" id="live-hidden" value="50" min="2" max="300" />
+            </div>
+            <div class="control-group">
+              <label for="live-act">MLP Activation</label>
+              <select id="live-act">
+                <option value="relu" selected>relu</option>
+                <option value="tanh">tanh</option>
+                <option value="logistic">logistic</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="live-solver">MLP Solver</label>
+              <select id="live-solver">
+                <option value="adam" selected>adam</option>
+                <option value="lbfgs">lbfgs</option>
+                <option value="sgd">sgd</option>
+              </select>
+            </div>
+          </div>
+          <button id="live-run-btn" class="btn-primary full-width">Train &amp; Profile Classifiers Live</button>
+          <div id="live-status" class="muted mt-sm">Trains Logistic Regression, Decision Tree, Random Forest, and your configured MLP live on the backend.</div>
+          <div class="table-wrap mt-sm">
+            <table id="live-exp-table"></table>
+          </div>
+          <div id="live-exp-chart" class="chart-box-sm mt-sm"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <div class="footer-brand-title">GreenML Studio</div>
+        <p class="footer-desc">Empirical Machine Learning Accuracy &amp; Energy Consumption Profiling Engine</p>
+      </div>
+      <div class="footer-right">
+        <div class="footer-meta-pill">Multi-Objective Pareto Optimization</div>
+        <div class="footer-meta-text">Calibrated with CodeCarbon &middot; Intel Hardware Telemetry</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/app.js?v=4.2"></script>
+</body>
+</html>
