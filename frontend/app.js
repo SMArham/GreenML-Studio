@@ -23,51 +23,79 @@ const APPLE_PLOT_CONFIG = {
   displayModeBar: false,
 };
 
+function isMobileView() {
+  return typeof window !== "undefined" && window.innerWidth <= 768;
+}
+
 function applePlotLayout(title, xTitle, yTitle, extra = {}) {
-  return {
+  const isMobile = isMobileView();
+  const defaultXaxis = {
+    automargin: true,
+    title: {
+      text: xTitle,
+      font: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', size: isMobile ? 10 : 11, color: APPLE_PALETTE.gray },
+      standoff: isMobile ? 6 : 8,
+    },
+    tickfont: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', size: isMobile ? 9 : 10, color: APPLE_PALETTE.gray },
+    gridcolor: "rgba(0, 0, 0, 0.04)",
+    linecolor: "rgba(0, 0, 0, 0.08)",
+    zerolinecolor: "rgba(0, 0, 0, 0.08)",
+  };
+  const defaultYaxis = {
+    automargin: true,
+    title: {
+      text: yTitle,
+      font: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', size: isMobile ? 10 : 11, color: APPLE_PALETTE.gray },
+      standoff: isMobile ? 6 : 8,
+    },
+    tickfont: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', size: isMobile ? 9 : 10, color: APPLE_PALETTE.gray },
+    gridcolor: "rgba(0, 0, 0, 0.04)",
+    linecolor: "rgba(0, 0, 0, 0.08)",
+    zerolinecolor: "rgba(0, 0, 0, 0.08)",
+  };
+
+  const layout = {
     title: {
       text: title,
-      x: 0.03,
+      x: 0.02,
       xanchor: "left",
-      y: 0.96,
+      y: 0.98,
       yanchor: "top",
       font: {
         family: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
-        size: 13,
+        size: isMobile ? 11.5 : 13,
         color: APPLE_PALETTE.charcoal,
       },
     },
-    xaxis: {
-      automargin: true,
-      title: {
-        text: xTitle,
-        font: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', size: 11, color: APPLE_PALETTE.gray },
-      },
-      tickfont: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', size: 10, color: APPLE_PALETTE.gray },
-      gridcolor: "rgba(0, 0, 0, 0.04)",
-      linecolor: "rgba(0, 0, 0, 0.08)",
-      zerolinecolor: "rgba(0, 0, 0, 0.08)",
-    },
-    yaxis: {
-      automargin: true,
-      title: {
-        text: yTitle,
-        font: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', size: 11, color: APPLE_PALETTE.gray },
-      },
-      tickfont: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', size: 10, color: APPLE_PALETTE.gray },
-      gridcolor: "rgba(0, 0, 0, 0.04)",
-      linecolor: "rgba(0, 0, 0, 0.08)",
-      zerolinecolor: "rgba(0, 0, 0, 0.08)",
-    },
-    margin: { t: 50, r: 24, b: 48, l: 68 },
+    xaxis: defaultXaxis,
+    yaxis: defaultYaxis,
+    margin: isMobile
+      ? { t: 36, r: 16, b: 110, l: 48 }
+      : { t: 45, r: 24, b: 70, l: 65 },
     paper_bgcolor: "#ffffff",
     plot_bgcolor: "#ffffff",
     font: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' },
     legend: {
-      font: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', size: 11, color: APPLE_PALETTE.charcoal },
+      orientation: "h",
+      x: 0.5,
+      xanchor: "center",
+      y: isMobile ? -0.28 : -0.18,
+      yanchor: "top",
+      font: {
+        family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+        size: isMobile ? 9.5 : 10.5,
+        color: APPLE_PALETTE.charcoal,
+      },
     },
     ...extra,
   };
+
+  if (extra.xaxis) layout.xaxis = { ...defaultXaxis, ...extra.xaxis };
+  if (extra.yaxis) layout.yaxis = { ...defaultYaxis, ...extra.yaxis };
+  if (extra.legend) layout.legend = { ...layout.legend, ...extra.legend };
+  if (extra.margin) layout.margin = { ...layout.margin, ...extra.margin };
+
+  return layout;
 }
 
 const state = {
@@ -170,8 +198,16 @@ function fmtNum(v, digits = 4) {
 }
 
 function resizeVisibleCharts() {
+  const isMobile = isMobileView();
   document.querySelectorAll(".tab-panel.active .js-plotly-plot").forEach((el) => {
-    try { Plotly.Plots.resize(el); } catch (_) {}
+    try {
+      Plotly.relayout(el, {
+        margin: isMobile ? { t: 36, r: 16, b: 110, l: 48 } : { t: 45, r: 24, b: 70, l: 65 },
+        "legend.y": isMobile ? -0.28 : -0.18,
+        "legend.font.size": isMobile ? 9.5 : 10.5,
+      });
+      Plotly.Plots.resize(el);
+    } catch (_) {}
   });
 }
 
@@ -457,8 +493,8 @@ async function loadExp1() {
     const ns = norm.summary || {};
     Plotly.newPlot(
       "exp1-hist-chart",
-      [{ x: norm.values, type: "histogram", nbinsx: 10, marker: { color: APPLE_PALETTE.green } }],
-      applePlotLayout(`Energy Distribution (${norm.dataset}): 30 Repeats (Skew=${fmtNum(ns.skewness, 2)}, p=${fmtNum(ns.shapiro_p, 4)})`, "CPU Training Energy (Joules)", "Frequency"),
+      [{ x: norm.values, type: "histogram", nbinsx: 10, marker: { color: APPLE_PALETTE.green }, showlegend: false }],
+      applePlotLayout(`Energy Distribution (${norm.dataset}): 30 Repeats (Skew=${fmtNum(ns.skewness, 2)}, p=${fmtNum(ns.shapiro_p, 4)})`, "CPU Training Energy (Joules)", "Frequency", { showlegend: false }),
       APPLE_PLOT_CONFIG
     );
   }
@@ -471,10 +507,11 @@ async function loadExp1() {
         y: data.configs.map((c) => c.train_energy_j),
         mode: "markers",
         type: "scatter",
+        showlegend: false,
         marker: { size: 6, color: APPLE_PALETTE.blue, opacity: 0.75 },
       },
     ],
-    applePlotLayout(`CPU Process Time vs Energy (${ds})`, "CPU Process Time (s)", "CPU Energy (Joules)"),
+    applePlotLayout(`CPU Process Time vs Energy (${ds})`, "CPU Process Time (s)", "CPU Energy (Joules)", { showlegend: false }),
     APPLE_PLOT_CONFIG
   );
 
@@ -490,11 +527,12 @@ async function loadExp1() {
           y: withFlops.map((c) => c.inf_energy_j),
           mode: "markers",
           type: "scatter",
+          showlegend: false,
           text: withFlops.map((c) => `h=${c.hidden_neurons}, params=${c.param_count}, solver=${c.solver}`),
           marker: { size: 7, color: APPLE_PALETTE.purple, opacity: 0.75 },
         },
       ],
-      applePlotLayout(`Theoretical Inference FLOPs/sample vs Measured 1k Inference Energy (${ds})`, "Inference FLOPs per Sample", "Measured Inference 1k Energy (J)"),
+      applePlotLayout(`Theoretical Inference FLOPs/sample vs Measured 1k Inference Energy (${ds})`, "Inference FLOPs per Sample", "Measured Inference 1k Energy (J)", { showlegend: false }),
       APPLE_PLOT_CONFIG
     );
   }
@@ -584,6 +622,7 @@ async function loadExp2() {
         y: data.all_points.map((p) => p.inf_energy_j),
         mode: "markers",
         type: "scatter",
+        showlegend: false,
         text: data.all_points.map((p) => `h=${p.hidden_neurons}, ${p.activation}, ${p.solver}, acc=${(p.test_accuracy * 100).toFixed(1)}%`),
         marker: {
           size: 8,
@@ -824,10 +863,16 @@ async function loadCross() {
     });
   }
 
+  const isMobile = isMobileView();
   Plotly.newPlot(
     "cross-chart",
     traces,
-    applePlotLayout(`Accuracy vs ${isTrain ? "Training" : "Inference 1k"} Energy (${ds})`, "Test Accuracy", "CPU Energy (Joules)"),
+    applePlotLayout(
+      `Accuracy vs ${isTrain ? "Training" : "Inference 1k"} Energy (${ds})`,
+      "Test Accuracy",
+      "CPU Energy (Joules)",
+      isMobile ? { margin: { t: 36, r: 16, b: 125, l: 48 }, legend: { y: -0.28 } } : {}
+    ),
     APPLE_PLOT_CONFIG
   );
 
@@ -977,6 +1022,7 @@ async function runLiveExperiment() {
           y: res.results.map((r) => r.train_energy_j),
           text: res.results.map((r) => r.model),
           mode: "markers+text",
+          showlegend: false,
           textposition: res.results.map((_, i) => positions[i % positions.length]),
           textfont: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif', size: 10.5, color: APPLE_PALETTE.charcoal },
           type: "scatter",
