@@ -23,6 +23,19 @@ const APPLE_PLOT_CONFIG = {
   displayModeBar: false,
 };
 
+function updateSliderFill(el) {
+  if (!el) return;
+  const min = parseFloat(el.min);
+  const max = parseFloat(el.max);
+  const val = parseFloat(el.value);
+  const realMin = isNaN(min) ? 0 : min;
+  const realMax = isNaN(max) ? 100 : max;
+  const realVal = isNaN(val) ? realMin : val;
+  const range = realMax - realMin;
+  const pct = range > 0 ? Math.max(0, Math.min(100, ((realVal - realMin) / range) * 100)) : 100;
+  el.style.setProperty("--progress", `${pct}%`);
+}
+
 function isMobileView() {
   return typeof window !== "undefined" && window.innerWidth <= 768;
 }
@@ -930,12 +943,20 @@ async function loadHotswapSurface() {
   const data = await apiGet(`/api/hotswap/surface/${ds}`);
   const accs = data.entries.map((e) => e.test_accuracy);
   const slaEl = document.getElementById("hs-sla");
-  slaEl.min = Math.min(...accs).toFixed(3);
-  slaEl.max = Math.max(...accs).toFixed(3);
-  if (Number(slaEl.value) < Number(slaEl.min) || Number(slaEl.value) > Number(slaEl.max)) {
-    slaEl.value = slaEl.min;
+  if (slaEl && accs.length > 0) {
+    const minAcc = Math.min(...accs);
+    const maxAcc = Math.max(...accs);
+    slaEl.min = minAcc.toFixed(3);
+    slaEl.max = maxAcc.toFixed(3);
+    slaEl.step = "0.001";
+    const currentVal = Number(slaEl.value);
+    if (isNaN(currentVal) || currentVal < minAcc || currentVal > maxAcc) {
+      slaEl.value = ((minAcc + maxAcc) / 2).toFixed(3);
+    }
+    const valEl = document.getElementById("hs-sla-val");
+    if (valEl) valEl.textContent = Number(slaEl.value).toFixed(3);
+    updateSliderFill(slaEl);
   }
-  document.getElementById("hs-sla-val").textContent = Number(slaEl.value).toFixed(3);
 
   renderTable(
     document.getElementById("hs-surface-table"),
@@ -1085,6 +1106,7 @@ async function init() {
     populateSelect(document.getElementById("exp3-dataset"), nsgaKeys, nsgaKeys.includes("diabetes") ? "diabetes" : nsgaKeys[0]);
     populateSelect(document.getElementById("cross-dataset"), crossKeys, crossKeys.includes("telco_churn") ? "telco_churn" : crossKeys[0]);
     populateSelect(document.getElementById("hs-dataset"), hsKeys, hsKeys.includes("diabetes") ? "diabetes" : hsKeys[0]);
+    loadHotswapSurface();
 
     renderOverview(summary);
   } catch (_) {}
@@ -1131,12 +1153,14 @@ async function init() {
   if (hsBat) {
     hsBat.addEventListener("input", (e) => {
       document.getElementById("hs-battery-val").textContent = `${e.target.value}%`;
+      updateSliderFill(e.target);
     });
   }
   const hsSla = document.getElementById("hs-sla");
   if (hsSla) {
     hsSla.addEventListener("input", (e) => {
       document.getElementById("hs-sla-val").textContent = Number(e.target.value).toFixed(3);
+      updateSliderFill(e.target);
     });
   }
   const hsBtn = document.getElementById("hs-run-btn");
@@ -1145,15 +1169,7 @@ async function init() {
   const liveBtn = document.getElementById("live-run-btn");
   if (liveBtn) liveBtn.addEventListener("click", runLiveExperiment);
 
-  // Initialize and bind all range sliders for modern track fill (matching Image 4)
-  function updateSliderFill(el) {
-    if (!el) return;
-    const min = parseFloat(el.min) || 0;
-    const max = parseFloat(el.max) || 100;
-    const val = parseFloat(el.value) || min;
-    const pct = Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
-    el.style.setProperty("--progress", `${pct}%`);
-  }
+  // Initialize and bind all range sliders for modern track fill
   document.querySelectorAll('input[type="range"]').forEach((slider) => {
     slider.addEventListener("input", () => updateSliderFill(slider));
     slider.addEventListener("change", () => updateSliderFill(slider));

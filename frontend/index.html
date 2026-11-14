@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-  <link rel="stylesheet" href="/static/styles.css?v=5.1" />
+  <link rel="stylesheet" href="/static/styles.css?v=5.2" />
 </head>
 <body>
   <header class="topbar">
@@ -279,8 +279,8 @@
               <input type="range" id="hs-battery" min="10" max="100" step="5" value="50" />
             </div>
             <div class="control-group">
-              <label for="hs-sla">Minimum Accuracy Threshold: <strong id="hs-sla-val">0.700</strong></label>
-              <input type="range" id="hs-sla" min="0.50" max="0.98" step="0.01" value="0.70" />
+              <label for="hs-sla">Minimum Accuracy Threshold: <strong id="hs-sla-val">0.750</strong></label>
+              <input type="range" id="hs-sla" min="0.734" max="0.766" step="0.001" value="0.750" />
             </div>
           </div>
           <button id="hs-run-btn" class="btn-primary full-width">Execute Hot-Swapped Inference</button>
@@ -351,6 +351,6 @@
     </div>
   </footer>
 
-  <script src="/static/app.js?v=5.1"></script>
+  <script src="/static/app.js?v=5.2"></script>
 </body>
 </html>
