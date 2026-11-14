@@ -153,7 +153,7 @@ def get_overview() -> Dict[str, Any]:
     return _clean_json_val(summary)
 
 
-FIGURE_METADATA: Dict[str, Dict[str, str]] = {
+FIGURE_METADATA: Dict[str, Dict[str, Any]] = {
     "01_master_research_synthesis.png": {
         "title": "Master Research Synthesis: The Full Empirical Story in One View",
         "short_title": "01 · Master All-in-One Synthesis",
@@ -161,6 +161,12 @@ FIGURE_METADATA: Dict[str, Dict[str, str]] = {
         "badge": "Core Master Plate",
         "description": "Multi-panel executive dashboard consolidating Pareto frontier knee points, hyperparameter attribution, NSGA-II hypervolume attainment, carbon payback horizons, and cross-model classifier benchmarks in a single publication-grade visualization.",
         "takeaway": "Empirically proves that optimal knee points save up to 85.7% energy for <1.5% accuracy trade-off across all classification tasks.",
+        "panels": [
+            {"file": "01_panel_a_pareto.png", "title": "Panel A: Multi-Dataset Pareto Frontiers & Recommended Knee Points", "tag": "01 · Part 1"},
+            {"file": "01_panel_b_cross_model.png", "title": "Panel B: Cross-Model Classifier Benchmark (Telco Churn)", "tag": "01 · Part 2"},
+            {"file": "01_panel_c_decoupling.png", "title": "Panel C: Training vs. Inference Stage Decoupling (RQ4)", "tag": "01 · Part 3"},
+            {"file": "01_panel_d_payback.png", "title": "Panel D: Carbon Payback Break-Even Horizon (Diabetes Benchmark)", "tag": "01 · Part 4"},
+        ],
     },
     "02_pareto_frontiers_multi_dataset.png": {
         "title": "Multi-Dataset Pareto Frontiers & Knee Point Trajectories",
@@ -169,6 +175,12 @@ FIGURE_METADATA: Dict[str, Dict[str, str]] = {
         "badge": "Pareto Frontiers",
         "description": "Comparative non-dominated Pareto frontiers across UCI datasets (Diabetes, Ionosphere, Glass, Iris, Mortgage) mapping test accuracy against CPU energy consumption in both training and inference lifecycle stages.",
         "takeaway": "Identifies non-dominated boundary curves and mathematical knee points, showing steep initial energy climb for diminishing accuracy returns.",
+        "panels": [
+            {"file": "02_pareto_diabetes.png", "title": "Pareto Frontier & Knee: Pima Indians Diabetes (UCI)", "tag": "02 · Part 1"},
+            {"file": "02_pareto_iris.png", "title": "Pareto Frontier & Knee: Iris Plant Recognition (UCI)", "tag": "02 · Part 2"},
+            {"file": "02_pareto_glass.png", "title": "Pareto Frontier & Knee: Glass Identification (UCI)", "tag": "02 · Part 3"},
+            {"file": "02_pareto_ionosphere.png", "title": "Pareto Frontier & Knee: Ionosphere Radar Returns (UCI)", "tag": "02 · Part 4"},
+        ],
     },
     "03_hyperparameter_drivers_decoupling.png": {
         "title": "Hyperparameter Attribution: Spearman Rank Correlation",
@@ -177,6 +189,7 @@ FIGURE_METADATA: Dict[str, Dict[str, str]] = {
         "badge": "Spearman Drivers",
         "description": "Empirical statistical attribution analyzing numerical architecture parameters (Spearman rank correlation) across training and inference lifecycle stages.",
         "takeaway": "Proves hidden neurons dominate inference energy (rho = 0.801) and max iterations drive training energy (rho = 0.586), while regularization (alpha) has virtually no inference impact.",
+        "panels": [],
     },
     "04_nsga2_payback_synthesis.png": {
         "title": "NSGA-II Multi-Objective Evolutionary Search & Carbon Payback",
@@ -185,6 +198,10 @@ FIGURE_METADATA: Dict[str, Dict[str, str]] = {
         "badge": "NSGA-II & Payback",
         "description": "Empirical attainment surfaces comparing NSGA-II genetic algorithm against exhaustive grid search, paired with production carbon payback break-even trajectory curves.",
         "takeaway": "NSGA-II discovers 99.1% of the true grid hypervolume in only 48 evaluations (saving 83% search compute), achieving carbon break-even in 352 days vs. 5.6 years for grid search.",
+        "panels": [
+            {"file": "04_nsga2_attainment.png", "title": "NSGA-II (48 evals) vs Full Grid (1,440 configs)", "tag": "04 · Part 1"},
+            {"file": "04_nsga2_payback.png", "title": "Carbon Payback Break-Even Horizon at 100k Queries/Day", "tag": "04 · Part 2"},
+        ],
     },
     "05_cross_model_benchmark_synthesis.png": {
         "title": "Cross-Paradigm Classifier Benchmark: Multi-Family Frontiers",
@@ -193,6 +210,10 @@ FIGURE_METADATA: Dict[str, Dict[str, str]] = {
         "badge": "Cross-Model",
         "description": "Cross-model evaluation across 6 classifier families (Decision Trees, Random Forests, Logistic Regression, Linear & RBF SVMs, and KNN) on multi-domain tabular datasets.",
         "takeaway": "Demonstrates that simpler models like Logistic Regression and KNN form green knee solutions, saving up to 96.4% energy compared to heavy ensembles like Random Forest.",
+        "panels": [
+            {"file": "05_cross_model_telco.png", "title": "Multi-Family Benchmark: Telco Customer Churn", "tag": "05 · Part 1"},
+            {"file": "05_cross_model_mortgage.png", "title": "Multi-Family Benchmark: Mortgage Loan Approval", "tag": "05 · Part 2"},
+        ],
     },
 }
 
@@ -202,21 +223,17 @@ def list_figures() -> Dict[str, Any]:
     if not FIGURES_DIR.exists():
         return {"figures": [], "items": []}
     files = sorted([f.name for f in FIGURES_DIR.glob("*.png")])
+    primary_keys = list(FIGURE_METADATA.keys())
     items = []
-    for f in files:
-        meta = FIGURE_METADATA.get(f, {
-            "title": f.replace("_", " ").replace(".png", "").title(),
-            "short_title": f,
-            "category": "Publication Figure",
-            "badge": "Empirical Result",
-            "description": "Empirical publication figure from the GreenML experimental benchmark.",
-            "takeaway": "Visual evidence supporting multi-objective accuracy and energy trade-off optimization.",
-        })
-        items.append({
-            "id": f,
-            "url": f"/figures/{f}",
-            **meta
-        })
+    for k in primary_keys:
+        f_path = FIGURES_DIR / k
+        if f_path.exists():
+            meta = FIGURE_METADATA[k]
+            items.append({
+                "id": k,
+                "url": f"/figures/{k}",
+                **meta
+            })
     return {"figures": files, "items": items}
 
 

@@ -247,24 +247,49 @@ async function loadFiguresGallery() {
     // Render scrollable cards deck
     deck.innerHTML = items
       .map(
-        (it, idx) => `
-        <article class="fig-card" id="card-${it.id}" data-fig="${it.id}">
-          <div class="fig-card-header">
-            <div class="fig-card-title-group">
-              <span class="fig-num-badge">0${idx + 1}</span>
-              <h3 class="fig-card-title">${it.title}</h3>
-              <span class="fig-card-tag">${it.badge || it.category}</span>
+        (it, idx) => {
+          let mediaHtml = "";
+          if (it.panels && it.panels.length > 0) {
+            mediaHtml = `
+              <div class="fig-panels-deck">
+                ${it.panels.map((p, pIdx) => `
+                  <div class="fig-panel-block">
+                    <div class="fig-panel-header">
+                      <span class="fig-panel-pill">${p.tag || ('Part ' + (pIdx + 1))}</span>
+                      <span class="fig-panel-title">${p.title}</span>
+                    </div>
+                    <div class="fig-image-wrap">
+                      <img src="${API_BASE}/figures/${encodeURIComponent(p.file)}" alt="${p.title}" loading="lazy" />
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            `;
+          } else {
+            mediaHtml = `
+              <div class="fig-image-wrap">
+                <img src="${API_BASE}/figures/${encodeURIComponent(it.id)}" alt="${it.title}" loading="lazy" />
+              </div>
+            `;
+          }
+
+          return `
+          <article class="fig-card" id="card-${it.id}" data-fig="${it.id}">
+            <div class="fig-card-header">
+              <div class="fig-card-title-group">
+                <span class="fig-num-badge">0${idx + 1}</span>
+                <h3 class="fig-card-title">${it.title}</h3>
+                <span class="fig-card-tag">${it.badge || it.category}</span>
+              </div>
             </div>
-          </div>
-          <p class="fig-card-desc">${it.description}</p>
-          <div class="fig-image-wrap">
-            <img src="${API_BASE}/figures/${encodeURIComponent(it.id)}" alt="${it.title}" loading="lazy" />
-          </div>
-          <div class="fig-card-takeaway">
-            <strong>Key Takeaway:</strong> ${it.takeaway}
-          </div>
-        </article>
-      `
+            <p class="fig-card-desc">${it.description}</p>
+            ${mediaHtml}
+            <div class="fig-card-takeaway">
+              <strong>Key Takeaway:</strong> ${it.takeaway}
+            </div>
+          </article>
+        `;
+        }
       )
       .join("");
 
@@ -916,7 +941,10 @@ async function runHotswapPredict() {
 
 async function runLiveExperiment() {
   const statusEl = document.getElementById("live-status");
-  statusEl.textContent = "Training 4 classifiers and measuring real energy on backend...";
+  if (statusEl) {
+    statusEl.classList.add("loading");
+    statusEl.innerHTML = `<span class="spinner-inline"></span> Training 4 classifiers and measuring real energy on backend...`;
+  }
   try {
     const res = await apiPost("/api/live-experiment", {
       dataset: document.getElementById("live-dataset").value,
@@ -924,7 +952,10 @@ async function runLiveExperiment() {
       mlp_activation: document.getElementById("live-act").value,
       mlp_solver: document.getElementById("live-solver").value,
     });
-    statusEl.textContent = `Completed on ${res.dataset} (${res.n_train} train / ${res.n_test} test rows).`;
+    if (statusEl) {
+      statusEl.classList.remove("loading");
+      statusEl.textContent = `Completed on ${res.dataset} (${res.n_train} train / ${res.n_test} test rows).`;
+    }
 
     renderTable(
       document.getElementById("live-exp-table"),
@@ -1067,6 +1098,21 @@ async function init() {
 
   const liveBtn = document.getElementById("live-run-btn");
   if (liveBtn) liveBtn.addEventListener("click", runLiveExperiment);
+
+  // Initialize and bind all range sliders for modern track fill (matching Image 4)
+  function updateSliderFill(el) {
+    if (!el) return;
+    const min = parseFloat(el.min) || 0;
+    const max = parseFloat(el.max) || 100;
+    const val = parseFloat(el.value) || min;
+    const pct = Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+    el.style.setProperty("--progress", `${pct}%`);
+  }
+  document.querySelectorAll('input[type="range"]').forEach((slider) => {
+    slider.addEventListener("input", () => updateSliderFill(slider));
+    slider.addEventListener("change", () => updateSliderFill(slider));
+    updateSliderFill(slider);
+  });
 }
 
 init();
